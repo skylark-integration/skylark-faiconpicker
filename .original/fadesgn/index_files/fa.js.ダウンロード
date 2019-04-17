@@ -1,0 +1,185 @@
+$(function() {
+	var fixBox = $('#fixed-part');
+	var setPosition = fixBox.offset().top;
+	var clearPosition = $('footer').offset().top+100;
+	var boxPositionCSS='fixed-area';
+	var faStack='false';
+	if ($(window).scrollTop() > setPosition) {fixBox.addClass('fixed-area');}
+	$(window).scroll(function() {
+		if ($(window).scrollTop() > setPosition&& $(window).scrollTop()< clearPosition) {
+			fixBox.addClass(boxPositionCSS);
+		} else {
+			fixBox.removeClass(boxPositionCSS);
+		}
+	});
+	var clipboard = new Clipboard('.copy-clipboard');
+	clipboard.on('success', function(e) {e.clearSelection();});
+
+	$('#box-position').click(function(){
+		fixBox.removeClass(boxPositionCSS);
+		if($('#box-position').html()=='ボックスを下へ移動'){
+			boxPositionCSS='fixed-area-bottom';
+			$('#box-position').text('ボックスを上へ移動');
+		}else{
+			boxPositionCSS='fixed-area';
+			$('#box-position').text('ボックスを下へ移動');
+		}
+		fixBox.addClass(boxPositionCSS);
+	});
+
+	$('.clear-data').bind('click', function() {
+		clearOption();
+		clearStackOption();
+		$('#class-name').val('');
+		$('#fa-code').val('');
+		$('#fa-icon').text('');
+		$('#fa-stack-code').val('');
+		$('#stack-icon-class-name').text('');
+		$('#stack-icon-code').text('');
+	});
+
+$('#clear-option').click(function(){clearOption();redraw();});
+	$('i').click(function() {
+		var className=$(this).attr('class').replace(/fa\s(.+?)\s.*/,'$1');
+		if(faStack!='false'&&$('#class-name').val()==''){
+			$('#stack-icon-class-name').val(className);
+		}
+		else{$('#stack-icon-class-name').val($('#class-name').val());
+		}
+		$('#class-name').val(className);
+		redraw();
+	});
+
+	$('#magnifications,#pull,input[name="fixed-width"],input[name="spin"]').change(function() {
+		redraw();
+	});
+	$('#rotate').change(function() {
+		$('input[name="spin"]:eq(0)').prop('checked', true);
+		$('#flip').val('');
+		redraw();
+	});
+	$('#flip').change(function() {
+		$('input[name="spin"]:eq(0)').prop('checked', true);
+		$('#rotate').val('');
+		redraw();
+	});
+	$('input[name="spin"]').change(function() {
+		$('#rotate').val('');
+		$('#flip').val('');
+		redraw();
+	});
+
+//重ね合わせ設定
+	$('input[name="fa-stack-option"]').change(function(){
+		$('#magnifications').children().remove();
+		if($('input[name="fa-stack-option"]:checked').val()=='true'){
+			faStack='true';
+			$('#magnifications').append('<option value=" fa-stack-1x" selected>重ねx1</option>','<option value=" fa-stack-2x">重ねx2</option>');
+			$('#stack-area').show();
+			$('#stack-icon-class-name').val($('#class-name').val());
+			$('#stack-icon-magnifications').val(' fa-stack-1x');
+			$('#stack-icon-rotate').val($('#rotate').val());
+			$('#stack-icon-flip').val($('#flip').val());
+			$('input[name="stack-icon-fixed-width"]').val([$('input[name="fixed-width"]:checked').val()]);
+			$('input[name="stack-icon-spin"]').val([$('input[name="spin"]:checked').val()]);
+			redraw();
+		}else{
+			faStack='false';
+			clearStackOption();
+			$('#magnifications').append('<option value=" fa-1x">x1</option>','<option value=" fa-2x" selected>x2</option>','<option value=" fa-3x">x3</option>','<option value=" fa-4x">x4</option>','<option value=" fa-5x">x5</option>');
+			redraw();
+			$('#stack-area').hide();
+		}
+	});
+
+	$('#fa-stack-code').change(function(){$('#fa-icon').html($('#fa-stack-code').val());});
+
+//stack-オプション
+$('#stack-clear-option').click(function(){
+	clearStackOption();
+	redraw();
+});
+	$('#stack-magnifications,#stack-pull,input[name="stack-fixed-width"],input[name="stack-spin"]').change(function() {
+		redraw();
+	});
+	$('#stack-rotate').change(function() {
+		$('input[name="stack-spin"]:eq(0)').prop('checked', true);
+		$('#stack-flip').val('');
+		redraw();
+	});
+	$('#stack-flip').change(function() {
+		$('input[name="stack-spin"]:eq(0)').prop('checked', true);
+		$('#stack-rotate').val('');
+		redraw();
+	});
+	$('input[name="stack-spin"]').change(function() {
+		$('#stack-rotate').val('');
+		$('#stack-flip').val('');
+		redraw();
+	});
+//stack-iconオプション
+	$('#stack-icon-magnifications,#stack-icon-pull,input[name="stack-icon-fixed-width"],input[name="stack-icon-spin"],input[name="stack-icon-inverse"]').change(function() {
+		redraw();
+	});
+
+	$('#stack-icon-rotate').change(function() {
+		$('input[name="stack-icon-spin"]:eq(0)').prop('checked', true);
+		$('#stack-icon-flip').val('');
+		redraw();
+	});
+	$('#stack-icon-flip').change(function() {
+		$('input[name="stack-icon-spin"]:eq(0)').prop('checked', true);
+		$('#stack-icon-rotate').val('');
+		redraw();
+	});
+
+	$('input[name="stack-icon-spin"]').change(function() {
+		$('#stack-icon-rotate,#stack-icon-flip').val('');
+		redraw();
+	});
+
+	function clearOption(){
+		if(faStack!=='false'){
+		$('#magnifications').val(' fa-stack-1x');	
+		}else{
+			$('#magnifications').val(' fa-2x');
+		}
+		$('#rotate,#flip,#pull').val('');
+
+		$('input[name="fixed-width"]:eq(0),input[name="spin"]:eq(0)').prop('checked', true);
+	}
+	function clearStackOption(){
+		$('#stack-magnifications').val(' fa-2x');
+		$('#stack-icon-magnifications option:first').prop('selected', true);
+		$('#fa-stack-code,#stack-rotate,#stack-flip,#stack-pull').val('');
+		$('input[name="stack-fixed-width"]:eq(0),input[name="stack-spin"]:eq(0)').prop('checked', true);
+		$('#stack-icon-flip,#stack-icon-rotate,#stack-icon-pull').val('');
+		$('input[name="stack-icon-fixed-width"]:eq(0),input[name="stack-icon-spin"]:eq(0),input[name="stack-icon-inverse"]:eq(0)').prop('checked', true);
+		redraw();
+	}
+	function redraw(){
+ 		var FACode='<i class="fa '+$('#class-name').val()+$("#magnifications").val()+$('#rotate').val()+$("#flip").val()+$("#pull").val()+$('input[name="fixed-width"]:checked').val()+$('input[name="spin"]:checked').val()+'"></i>';
+		$('#fa-code').val(FACode);
+		$('#fa-icon').html(FACode);
+		$('#fa-icon-2').html('<i class="fa '+$('#class-name').val()+' fa-2x"></i>');
+		if(faStack!='false'&&$('#stack-icon-class-name').val()!=''){
+ 			var StackIconCode='<i class="fa '+$('#stack-icon-class-name').val()+$("#stack-icon-magnifications").val()+$('#stack-icon-rotate').val()+$("#stack-icon-flip").val()+$("#stack-icon-pull").val()+$('input[name="stack-icon-fixed-width"]:checked').val()+$('input[name="stack-icon-spin"]:checked').val()+$('input[name="stack-icon-inverse"]:checked').val()+'"></i>';
+ 			$('#stack-icon-code').val(StackIconCode);
+ 			var StackCode='<span class="fa-stack'+$('#stack-magnifications').val()+$('#stack-rotate').val()+$('#stack-flip').val()+$('#stack-pull').val()+$('input[name="stack-fixed-width"]:checked').val()+$('input[name="stack-spin"]:checked').val()+'">';
+$('#fa-icon').html($('#fa-stack-code').val());
+		$('#fa-stack-code').val(StackCode+'\r\n'+$('#fa-code').val()+'\r\n'+$('#stack-icon-code').val()+'\r\n</span>');
+
+		$('#fa-icon').html($('#fa-stack-code').val());
+$('#fa-icon-3').html('<i class="fa '+$('#stack-icon-class-name').val()+' fa-2x"></i>');
+		}
+	}
+
+});
+
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-53388086-4', 'auto');
+  ga('send', 'pageview');

@@ -1,0 +1,31 @@
+@charset "UTF-8";
+#fixed-part {text-align: left; background: #E5E9EA;border: solid 1px black;padding: 5px 2px 2px 2px;font-size:14px:z-index: 100;}
+#fixed-part > * ,#stack-area > * {margin:0;padding:0;}
+input{max-width:20em;}
+#stack-area > textarea{width:auto;}
+#fa-code {width:auto;}
+button{padding:5px 4px;margin:3px;background:#EEEEEE;}
+.fixed-area {
+	position: fixed;
+	top: 0;
+	left:0;
+	background: #E5E9EA;
+	border: solid 1px black;
+	padding: 5px;
+}
+.fixed-area-bottom {
+	position: fixed;
+	bottom: 0;
+	left:0;
+	background: #E5E9EA;
+	border: solid 1px black;
+	padding: 5px 5px 10px 5px;
+}
+
+#fa-icon-box {position: relative; background:white; height:110px; border:solid 1px;}
+.fa-icon-position-css {position:absolute;bottom:3px;width:100%;}
+.ad-box{text-align: center;margin:0;padding:2em 0em;}
+.ad-text{text-align: center; margin:0; padding:0;}
+i {margin:8px 6px;}
+.for-mobile{display:inline;}
+@media (max-height: 720px) {.for-mobile{display:none;}}
